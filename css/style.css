@@ -27,6 +27,12 @@ header * {
 header h1 {
     margin-top: 13px;
 }
+.logo {
+    max-width: 40px;
+    height: auto;
+    padding-bottom: 5px;
+    padding-left: 5px;
+}
 header h1 a {
     color: #ffffff;
 }
@@ -75,7 +81,7 @@ header ul li ul li a {
     color: #fff;
 }
 
-/*Блок карусели*/
+/*К А Р У С Е Л Ь*/
 
 .slider-title {
     text-align: center;
@@ -113,7 +119,7 @@ header ul li ul li a {
     transition: 0.5s;
 }
 
-/*Основной контент*/
+/*О С Н О В Н О Й  К О Н Т Е Н Т*/
 
 .main-content h2{
     margin: 30px 0;
@@ -173,7 +179,7 @@ header ul li ul li a {
     transition: 0.5s;
 }
 
-/*Панель поиска*/
+/*П А Н Е Л Ь  П О И С К А*/
 
 .search {
     margin-top: 99px;
@@ -228,7 +234,7 @@ header ul li ul li a {
     transition: 0.5s;
 }
 
-/*Подвал*/
+/*Ф У Т Е Р*/
 
 .footer {
     color: #ffffff;
@@ -303,6 +309,7 @@ header ul li ul li a {
 }
 
 /*А У Д И О  П Л Е Е Р*/
+
 .custom-audio {
     display: flex;
     align-items: center;
@@ -336,7 +343,7 @@ header ul li ul li a {
 
 .progress {
     height: 100%;
-    background-color: #44318d; /* Зеленый прогресс */
+    background-color: #44318d; 
     width: 0;
 }
 
@@ -460,4 +467,52 @@ header ul li ul li a {
 
 .show.visible {
     opacity: 1; /* Полная видимость */
+}
+
+/*А В А Т А Р  П Р О Ф И Л Я*/
+
+.avatar {
+    transition: 0.5s;
+}
+
+.avatar:hover {
+    box-shadow: 1px 1px 25px #44318d;
+    transition: 0.5s;
+}
+
+.favorite-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #fff;
+    font-size: 24px;
+    transition: 0.5s;
+    padding-left: 20px;
+}
+
+.favorite-button:hover {
+    color: #44318d;
+    transition: 0.5s;
+}
+
+.genre-select {
+    transition: 0.5s;
+    background-color: #202020;
+    color: #bebdbd; 
+    border: none;
+    border-radius: 25px;
+    padding: 10px 25px;
+    margin-top: 10px;
+}
+
+.genre-select:hover {
+    box-shadow: 1px 1px 35px #44318d;
+    transition: 0.5s;
+    padding: 15px 25px;
+}
+
+.genre-select:focus{
+    box-shadow: 1px 1px 35px #44318d;
+    background-color: #1a1a1a;
+    border: 2px solid #fff;
 }

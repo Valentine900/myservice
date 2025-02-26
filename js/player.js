@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 const otherPlayBtn = otherPlayer.querySelector(".play-btn");
                 if (otherAudio !== audio && !otherAudio.paused) {
                     otherAudio.pause();
-                    otherAudio.currentTime = 0; // Сбросить время
+                    otherAudio.currentTime = 0; 
                     otherPlayBtn.textContent = "Play"; // Обновить текст кнопки
                 }
             });
@@ -60,3 +60,5 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 });
+
+

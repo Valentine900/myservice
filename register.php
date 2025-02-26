@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>MuSeek</title>
+    <link rel="icon" href="images/waves.png" type="image/png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
     <link rel="stylesheet" href="css/style.css">
@@ -18,7 +19,9 @@
         <div class="row"> 
             <div class="col-4"> 
                 <h1> 
-                    <a href="/">MuSeek</a> 
+                    <a href="index.php">MuSeek
+                    <img src="images/waves.png" alt="Логотип" class="logo" href="index.php">
+                    </a> 
                 </h1> 
             </div> 
             <nav class="col-8"> 
@@ -27,7 +30,7 @@
                     <li><a href="all.php">Вся музыка</a></li> 
                     <li><a href="register.php">Регистрация</a></li> 
                     <li><a href="login.php">Вход</a></li>
-                    <?php if (isset($_SESSION['id'])): ?> <!-- Проверка авторизации -->
+                    <?php if (isset($_SESSION['id'])): ?> <!-- Проверка, авторизован ли пользователь -->
                         <li><a href="add.php">Добавить песню</a></li> 
                         <li> 
                             <a href="profile.php"> 
@@ -40,7 +43,7 @@
                                 <li><a href="logout.php">Выход</a></li> 
                             </ul> 
                         </li> 
-                    <?php endif; ?> <!-- Конец проверки авторизации -->
+                    <?php endif; ?>
                 </ul> 
             </nav> 
         </div> 
@@ -63,15 +66,14 @@ $dbname = "myservice";
 session_start(); 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') { 
-    // Подключение к базе данных 
+   
     $conn = new mysqli($servername, $username, $password, $dbname); 
 
-    // Проверка соединения 
     if ($conn->connect_error) { 
         die("Connection failed: " . $conn->connect_error); 
     } 
 
-    // Получение и очистка данных из формы 
+    // Получеаем и очистка данных из формы 
     $username = trim($_POST['username']); 
     $password = $_POST['password']; 
     $email = trim($_POST['email']); 
@@ -82,31 +84,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 
-    // Хэширование пароля 
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT); 
 
-    // Проверка на существование пользователя или email 
+    // Проверка, существует ли пользователь или email 
     $stmt = $conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?"); 
     $stmt->bind_param("ss", $username, $email); 
     $stmt->execute(); 
     $stmt->store_result(); 
 
     if ($stmt->num_rows > 0) { 
-        echo "Пользователь с таким именем или электронной почтой уже существует."; 
+        echo "<div class='container'>";
+        echo "<span style='color: #fff; font-size: 20px;'>Пользователь с таким именем или электронной почтой уже существует!</span>";
+        echo "</div>";
     } else { 
-        // Подготовленный запрос для предотвращения SQL-инъекций 
         $stmt = $conn->prepare("INSERT INTO users (username, password, email) VALUES (?, ?, ?)"); 
         $stmt->bind_param("sss", $username, $hashedPassword, $email); 
 
-        // Выполнение запроса и проверка на ошибки 
         if ($stmt->execute()) { 
-            echo "Регистрация прошла успешно. Теперь вы можете <a href='login.php'>войти</a>."; 
-            // Можно перенаправить пользователя на страницу входа
-            // header("Location: login.php");
-            // exit();
+            echo "<div class='container'>";
+            echo "<span style='color: #fff; font-size: 20px;'>Регистрация прошла успешно. Теперь вы можете <a href='login.php' style='color: #44318d';>войти!</a></span>";
+            echo "</div>";
         } else { 
-            echo "Ошибка при регистрации. Пожалуйста, попробуйте еще раз."; 
+            echo "<div class='container'>";
+            echo "<span style='color: #fff; font-size: 20px;'>Ошибка при регистрации. Пожалуйста, попробуйте еще раз.</span>";
+            echo "</div>";
         } 
+        
     } 
 
     $stmt->close(); 
@@ -120,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input class="form-control form-input" type="text" name="username" placeholder="Имя пользователя" required> 
         </div>
         <div class="mb-4">
-            <input class="form-control form-input" type="email" name="email" placeholder="Электронная почта" required> <!-- Поле для email --> 
+            <input class="form-control form-input" type="email" name="email" placeholder="Электронная почта" required> 
         </div>    
         <div class="mb-4">    
             <input class="form-control form-input" type="password" name="password" placeholder="Пароль" required>

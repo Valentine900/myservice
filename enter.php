@@ -1,26 +1,24 @@
-
 <?php  
-    session_start(); // Переместить сюда для доступа к сессии в заголовке
+session_start(); 
+$servername = "MySQL-8.2";  
+$db_username = "root";  
+$db_password = "";  
+$dbname = "myservice";  
 
-    $servername = "MySQL-8.2";  
-    $username = "root";  
-    $password = "";  
-    $dbname = "myservice";  
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {  
+  
+    $conn = new mysqli($servername, $db_username, $db_password, $dbname);  
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {  
-        // Подключение к базе данных  
-        $conn = new mysqli($servername, $username, $password, $dbname);  
+    if ($conn->connect_error) {  
+        die("Connection failed: " . $conn->connect_error);  
+    }  
 
-        // Проверка соединения  
-        if ($conn->connect_error) {  
-            die("Connection failed: " . $conn->connect_error);  
-        }  
-
+    // Проверка на существования полей формы
+    if (isset($_POST['username']) && isset($_POST['password'])) {
         // Получение и очистка данных из формы  
         $username = trim($_POST['username']);  
         $password = $_POST['password'];  
 
-        // Подготовленный запрос для предотвращения SQL-инъекций  
         $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");  
         $stmt->bind_param("s", $username);  
         $stmt->execute();  
@@ -38,9 +36,9 @@
                 $_SESSION['username'] = $username;
 
                 echo "<div class='alert alert-success'>Добро пожаловать, " . htmlspecialchars($username) . "!</div>";  
-                // Можно перенаправить пользователя на защищенную страницу 
-                // header("Location: protected_page.php"); 
-                // exit(); 
+                header("Location: index.php");
+                exit;
+
             } else {  
                 echo "<div class='alert alert-danger'>Неверное имя пользователя или пароль.</div>";  
             }  
@@ -49,6 +47,8 @@
         }  
 
         $stmt->close();  
-        $conn->close();  
-    }  
-    ?>  
+    } 
+    
+    $conn->close();  
+}  
+?>

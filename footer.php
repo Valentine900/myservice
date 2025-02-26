@@ -25,7 +25,7 @@
       </div>
 
       <div class="footer-section links col-md-4 col-12">
-        <h3>Быстрые сслыки</h3>
+        <h3>Быстрые ссылки</h3>
         <br>
         <ul>
           <a href="index.php">
@@ -40,16 +40,23 @@
         </ul>
       </div>
 
+      
+
       <div class="footer-section contact-form col-md-4 col-12">
+        <?php include 'submit_feedback.php'?>
         <h3>Контакты</h3>
         <br>
-        <form action="index.html" method="post">
+        <form action="" method="post">
           <input type="email" name="email" class="text-input contact-input" placeholder="Ваш Email">
           <textarea rows="4" name="message" class="text-input contact-input" placeholder="Ваше сообщение"></textarea>
           <button type="submit" class="btn btn-big contact-btn">
             Отправить
           </button>
         </form>
+
+        <?php if (!empty($message)): ?>
+        <p><?php echo $message; ?></p> 
+        <?php endif; ?>
       </div>
     
     </div>
