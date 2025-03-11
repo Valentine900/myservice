@@ -37,10 +37,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['search-term'])) {
 
         // Проверка наличия результатов
         if ($results) {
-            echo "<h3>Результаты поиска для: " . htmlspecialchars($searchTerm) . "</h3>";
+            echo "<h3 style='font-size: 20px;'>Результаты поиска для: " . htmlspecialchars($searchTerm) . "</h3>";
             echo "<ul>";
             foreach ($results as $row) {
-                echo "<li style='color: #fff';><strong>Название:</strong> <a href='song.php?id=" . htmlspecialchars($row['id']) . "'>" . htmlspecialchars($row['title']) . "</a>" . 
+                echo "<li style='color: #fff; font-size: 13px;margin-right: 10px;';><strong>Название:</strong> <a href='song.php?id=" . htmlspecialchars($row['id']) . "'>" . htmlspecialchars($row['title']) . "</a>" . 
                      ", <strong>Исполнитель:</strong> " . htmlspecialchars($row['artist']) . 
                      ", <strong>Жанр:</strong> " . htmlspecialchars($row['genre']) . 
                      ", <strong>Дата публикации:</strong> " . htmlspecialchars($row['release_date']) . "</li>";
@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['search-term'])) {
 
         $stmt->close();
     } else {
-        echo "<p>Пожалуйста, введите поисковый запрос.</p>";
+        echo "<p style='color: #fff';>Пожалуйста, введите поисковый запрос.</p>";
     }
 }
 

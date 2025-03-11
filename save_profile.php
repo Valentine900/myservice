@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Проверяем наличие жанра в POST-запросе
         if (isset($_POST['favorite_genre'])) {
-            $favoriteGenre = trim($_POST['favorite_genre']); /
+            $favoriteGenre = trim($_POST['favorite_genre']); 
 
             // Валидация длины жанра
             if (strlen($favoriteGenre) > 50) {

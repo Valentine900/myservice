@@ -10,9 +10,13 @@ document.addEventListener("DOMContentLoaded", function() {
         const durationLabel = player.querySelector(".duration");
 
         // Обновляем длительность песни
-        audio.addEventListener("loadedmetadata", function() {
+        if (audio.readyState >= 1) {
             durationLabel.textContent = formatTime(audio.duration);
-        });
+        } else {
+            audio.addEventListener("loadedmetadata", function() {
+                durationLabel.textContent = formatTime(audio.duration);
+            }, { once: true });
+        }
 
         // Обновляем текущее время и прогресс
         audio.addEventListener("timeupdate", function() {

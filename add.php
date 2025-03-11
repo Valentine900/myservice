@@ -1,4 +1,6 @@
 <?php
+session_start(); // Убедитесь, что сессия запущена для доступа к идентификатору пользователя
+
 $servername = "MySQL-8.2";
 $username = "root";
 $password = "";
@@ -8,6 +10,13 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+
+// Проверяем, что пользователь аутентифицирован и у него есть идентификатор
+if (!isset($_SESSION['id'])) {
+    die("Вы должны быть авторизованы для загрузки песни.");
+}
+
+$uploaded_by = $_SESSION['id']; // Получаем ID пользователя из сессии
 
 // Обработка формы добавления песни
 if ($_SERVER['REQUEST_METHOD'] == 'POST') { 
@@ -19,32 +28,55 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $release_date = date('Y-m-d H:i:s');
 
     // Загрузка обложки
-    $image_path = 'uploads/' . basename($_FILES['image']['name']); 
+    $target_dir_covers = 'uploads/covers/';
+    $image_file_type = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+    $image_path = $target_dir_covers . uniqid('cover_', true) . '.' . $image_file_type;
+
+    // Проверка типа файла изображения
+    if (getimagesize($_FILES['image']['tmp_name']) === false) {
+        die("Файл не является изображением.");
+    }
+
+    // Проверка и загрузка изображения
     if (!move_uploaded_file($_FILES['image']['tmp_name'], $image_path)) {
         die("Ошибка загрузки изображения.");
     }
 
     // Загрузка песни
-    $song_path = 'uploads/' . basename($_FILES['song']['name']); 
+    $target_dir_songs = 'uploads/songs/';
+    $song_file_type = strtolower(pathinfo($_FILES['song']['name'], PATHINFO_EXTENSION));
+    $song_path = $target_dir_songs . uniqid('song_', true) . '.' . $song_file_type;
+
+    // Проверка типа файла песни (например, mp3)
+    if ($song_file_type != 'mp3' && $song_file_type != 'wav') {
+        die("Допустимые форматы песен: mp3, wav.");
+    }
+
+    // Проверка и загрузка песни
     if (!move_uploaded_file($_FILES['song']['tmp_name'], $song_path)) {
         die("Ошибка загрузки песни.");
     }
 
-    // Вставка данных в базу данных
-    $sql = "INSERT INTO songs (title, artist, genre, lyrics, image_path, song_path, release_date) VALUES ('$title', '$artist', '$genre', '$lyrics', '$image_path', '$song_path', '$release_date')"; 
-
-    if ($conn->query($sql) === TRUE) { 
-        echo "<div class='container'>";
-        echo "<span style='color: #fff; font-size: 20px;'>Новая песня успешно добавлена!</span>";
-        echo "</div>";
-    } else { 
-        echo "Ошибка: " . $sql . "<br>" . $conn->error; 
-    } 
+    // Вставка данных в базу данных с использованием подготовленных выражений
+    $stmt = $conn->prepare("INSERT INTO songs (title, artist, genre, lyrics, image_path, song_path, release_date, uploaded_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    if ($stmt) {
+        $stmt->bind_param("ssssssss", $title, $artist, $genre, $lyrics, $image_path, $song_path, $release_date, $uploaded_by);
+        
+        if ($stmt->execute()) { 
+            echo "<div class='container'>";
+            echo "<span style='color: #fff; font-size: 20px;'>Новая песня успешно добавлена!</span>";
+            echo "</div>";
+        } else { 
+            echo "Ошибка: " . $stmt->error; 
+        }
+        $stmt->close();
+    } else {
+        echo "Ошибка подготовки запроса: " . $conn->error;
+    }
 } 
 
 $conn->close(); 
-?> 
-
+?>
 
 
 <!doctype html>
@@ -66,37 +98,7 @@ $conn->close();
 
 <?php include 'enter.php';?>
 <?php if (isset($_SESSION['id'])): ?> 
-<header class="container-fluid"> 
-    <div class="container">
-        <div class="row">
-            <div class="col-4">
-                <h1>
-                    <a href="index.php">MuSeek
-                    <img src="images/waves.png" alt="Логотип" class="logo" href="index.php">
-                    </a> 
-                </h1>
-            </div>
-            <nav class="col-8">
-                <ul>
-                    <li><a href="index.php">Главная</a></li>
-                    <li><a href="all.php">Вся музыка</a></li>
-                    <li><a href="add.php">Добавить песню</a></li>
-
-                    <li>
-                    <a href="<?php echo ($_SESSION['username'] === 'Admin') ? 'admin.php' : 'profile.php'; ?>"> 
-                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 30 30">
-                                <path d="M18,19v-2c0.45-0.223,1.737-1.755,1.872-2.952c0.354-0.027,0.91-0.352,1.074-1.635c0.088-0.689-0.262-1.076-0.474-1.198 c0,0,0.528-1.003,0.528-2.214c0-2.428-0.953-4.5-3-4.5c0,0-0.711-1.5-3-1.5c-4.242,0-6,2.721-6,6c0,1.104,0.528,2.214,0.528,2.214 c-0.212,0.122-0.562,0.51-0.474,1.198c0.164,1.283,0.72,1.608,1.074,1.635C10.263,15.245,11.55,16.777,12,17v2c-1,3-9,1-9,8h24 C27,20,19,22,18,19z"></path>
-                            </svg>
-                            <?php echo ($_SESSION['username'] === 'Admin') ? 'Админ панель' : 'Мой профиль'; ?>
-                        </a>
-                        <ul>
-                            <li><a href="logout.php">Выход</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </div>
+<?php include 'header.php';?>
 
 <div class="container mt-5">
     <h2>Загрузить песню</h2> 
@@ -129,7 +131,7 @@ $conn->close();
     </form> 
 </div>
 
-</header> 
+
 <?php else: ?>
 <h1>Сначала нужно зарегистрироваться!</h1>
 <a href="register.php" style="color: #ffffff; text-decoration: underline;">Регистрация</a>

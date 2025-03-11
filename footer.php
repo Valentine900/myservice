@@ -31,11 +31,11 @@
           <a href="index.php">
             <li>Главная</li>
           </a>
-          <a href="#">
-            <li>О нас</li>
-          </a>
           <a href="all.php">
             <li>Вся музыка</li>
+          </a>
+          <a href="add.php">
+            <li>Добавить песню</li>
           </a>
         </ul>
       </div>

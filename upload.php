@@ -42,6 +42,14 @@ if ($result->num_rows > 0) {
         echo '<input type="hidden" name="action" value="remove">'; 
         echo '<button type="submit" class="favorite-button" title="Удалить из избранного">-</button>';
         echo '</form>';
+        
+
+        // Проверка прав доступа
+        if ((isset($_SESSION['admin']) && $_SESSION['admin'] == 1) || 
+        (isset($_SESSION['id']) && $_SESSION['id'] == $row['uploaded_by'])) {
+        // Кнопка «Редактировать»
+        echo '<a href="edit_song.php?id=' . htmlspecialchars($row['id']) . '" class="edit-button" title="Редактировать">✎</a>';
+        }
 
         // Уникальные идентификаторы для каждого элемента
         $uniqueId = "audio_" . htmlspecialchars($row['id']);
@@ -62,7 +70,7 @@ if ($result->num_rows > 0) {
 
     echo '<script src="js/player.js"></script>';
 } else { 
-    echo "Нет загруженных песен."; 
+    echo '<p style="color: white;">Нет загруженных песен.</p>'; 
 } 
 
 $conn->close(); 

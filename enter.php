@@ -13,20 +13,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         die("Connection failed: " . $conn->connect_error);  
     }  
 
-    // Проверка на существования полей формы
+    // Проверка на существование полей формы
     if (isset($_POST['username']) && isset($_POST['password'])) {
         // Получение и очистка данных из формы  
         $username = trim($_POST['username']);  
         $password = $_POST['password'];  
 
-        $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");  
+        $stmt = $conn->prepare("SELECT id, password, admin FROM users WHERE username = ?");  
         $stmt->bind_param("s", $username);  
         $stmt->execute();  
         $stmt->store_result();  
 
         // Проверка, существует ли пользователь  
         if ($stmt->num_rows > 0) {  
-            $stmt->bind_result($id, $hashedPassword);  
+            $stmt->bind_result($id, $hashedPassword, $isAdmin);  
             $stmt->fetch();  
 
             // Проверка пароля  
@@ -34,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // Успешный вход, установка сессии  
                 $_SESSION['id'] = $id;  
                 $_SESSION['username'] = $username;
+                $_SESSION['admin'] = $isAdmin; 
 
                 echo "<div class='alert alert-success'>Добро пожаловать, " . htmlspecialchars($username) . "!</div>";  
                 header("Location: index.php");
@@ -50,5 +51,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } 
     
     $conn->close();  
-}  
+}
 ?>

@@ -35,10 +35,9 @@ $stmt->close();
 // Проверяем, была ли загружена форма
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['avatar'])) {
     // Папка для загрузки
-    $target_dir = "uploads/";
-    $target_file = $target_dir . basename($_FILES["avatar"]["name"]);
+    $target_dir = "uploads/userpics/";
     $uploadOk = 1;
-    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+    $imageFileType = strtolower(pathinfo($_FILES["avatar"]["name"], PATHINFO_EXTENSION));
 
     // Проверка, является ли загруженный файл изображением
     $check = getimagesize($_FILES["avatar"]["tmp_name"]);
@@ -65,9 +64,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['avatar'])) {
     if ($uploadOk == 0) {
         echo "Извините, файл не был загружен.";
     } else {
+        // Генерация уникального имени файла
+        $new_file_name = uniqid('avatar_', true) . '.' . $imageFileType; // Создаем уникальное имя
+        $target_file = $target_dir . $new_file_name; // Полный путь к файлу
+
         // Загружаем файл, если прошли все проверки
         if (move_uploaded_file($_FILES["avatar"]["tmp_name"], $target_file)) {
-            echo "Файл ". htmlspecialchars(basename($_FILES["avatar"]["name"])) . " был загружен.";
+            echo "Файл " . htmlspecialchars(basename($new_file_name)) . " был загружен.";
 
             // Обновляем путь к аватару в базе данных
             $stmt = $conn->prepare("UPDATE users SET avatar = ? WHERE id = ?");
